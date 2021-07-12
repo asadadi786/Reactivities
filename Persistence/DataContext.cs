@@ -10,5 +10,7 @@ namespace Persistence
         }
 
         public DbSet<Activity> Activities { get; set; }
+        public DbSet<Order> Orders { get; set; }
+
     }
 }

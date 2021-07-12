@@ -1,9 +1,15 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
+import './app/layout/styles.css';
 import 'semantic-ui-css/semantic.min.css';
-import App from './App';
+import App from './app/layout/App';
 import reportWebVitals from './reportWebVitals';
+import { setChonkyDefaults } from 'chonky';
+import { ChonkyIconFA } from 'chonky-icon-fontawesome';
+
+// Somewhere in your `index.ts`:
+setChonkyDefaults({ iconComponent: ChonkyIconFA });
+
 
 ReactDOM.render(
 

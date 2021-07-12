@@ -19,11 +19,12 @@ namespace API
 
             var services = scope.ServiceProvider;
 
-            try 
+            try
             {
                 var context = services.GetRequiredService<DataContext>();
                 await context.Database.MigrateAsync();
                 await Seed.SeedData(context);
+                await Seed.SeedData1(context);
             }
             catch (Exception ex)
             {
@@ -31,7 +32,7 @@ namespace API
                 logger.LogError(ex, "An error occured during migraiton");
             }
 
-             await host.RunAsync();
+            await host.RunAsync();
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
