@@ -2,10 +2,11 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './app/layout/styles.css';
 import 'semantic-ui-css/semantic.min.css';
-import App from './app/layout/App';
+//import App from './app/layout/App';
 import reportWebVitals from './reportWebVitals';
 import { setChonkyDefaults } from 'chonky';
 import { ChonkyIconFA } from 'chonky-icon-fontawesome';
+import Dump from './app/layout/Dump';
 
 // Somewhere in your `index.ts`:
 setChonkyDefaults({ iconComponent: ChonkyIconFA });
@@ -13,7 +14,7 @@ setChonkyDefaults({ iconComponent: ChonkyIconFA });
 
 ReactDOM.render(
 
-  <App />,
+  <Dump />,
   document.getElementById('root')
 );
 

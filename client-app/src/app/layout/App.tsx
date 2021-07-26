@@ -7,7 +7,9 @@ import ActivityDashboard from '../../features/activities/dashboard/ActivityDashb
 import OrderDashboard from '../../features/orders/dashboard/OrderDashboard';
 import { Order } from '../models/order';
 import { v4 as uuid } from 'uuid';
-//import { MyFileBrowser } from './MyFileBrowser';
+import agent from '../api/agent';
+import LoadingComponent from './LoadingComponent';
+
 
 
 function App() {
@@ -15,15 +17,22 @@ function App() {
   const [activities, setActivities] = useState<Activity[]>([]);
   const [selectedActivity, setSelectedActivity] = useState<Activity | undefined>(undefined)
   const [editMode, setEditMode] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
 
   const [orders, setOrders] = useState<Order[]>([]);
 
   useEffect(() => {
 
-    axios.get<Activity[]>('http://localhost:5000/api/activities').then(response => {
+    agent.Activities.list().then(response => {
+      let activities: Activity[] = [];
 
-      setActivities(response.data);
-
+      response.forEach(activity => {
+        activity.date = activity.date.split('T')[0];
+        activities.push(activity);
+      })
+      setActivities(activities);
+      setLoading(false);
     })
 
     //Orders Fetch
@@ -63,21 +72,44 @@ function App() {
 
   function handleCreateOrEditActivity(activity: Activity) {
 
-    activity.id
-      ? setActivities([...activities.filter(x => x.id !== activity.id), activity])
-      : setActivities([...activities, { ...activity, id: uuid() }]);
+    setSubmitting(true); //for initiating loading indicators on (edit/create)activity submit
+    if (activity.id) { //editing activity
 
-    setEditMode(false);
-    setSelectedActivity(activity);
+      agent.Activities.update(activity).then(() => {
+
+        setActivities([...activities.filter(x => x.id !== activity.id), activity]) //edit existing activity
+        setEditMode(false);
+        setSelectedActivity(activity);
+        setSubmitting(false);
+      })
+    } else {//creating new activity
+
+      activity.id = uuid();
+
+      agent.Activities.create(activity).then(() => {
+        setActivities([...activities, { ...activity }]); //adding new activity to existing activity array
+        setSelectedActivity(activity);
+        setEditMode(false);
+        setSubmitting(false);
+      })
+
+    }
   }
 
   function handleDeleteActivity(id: string) {
-    setActivities([...activities.filter(x => x.id !== id)]);
+    setSubmitting(true);
+    agent.Activities.delete(id).then(() => {
+      setActivities([...activities.filter(x => x.id !== id)]);
+      setSubmitting(false);
+    })
   }
 
+  if (loading) return <LoadingComponent content='Loading App' />
   return (
     <>
       <NavBar openForm={handleFormOpen} />
+
+
       <Container style={{ marginTop: '7em' }}>
         <ActivityDashboard
           activities={activities}
@@ -89,10 +121,12 @@ function App() {
           closeForm={handleFormClose}
           createOrEdit={handleCreateOrEditActivity}
           deleteActivity={handleDeleteActivity}
+          submitting={submitting}
         />
       </Container>
 
       <Container style={{ marginTop: '7em' }}>
+
         <OrderDashboard orders={orders} />
       </Container>
 

@@ -1,4 +1,5 @@
 import { FullFileBrowser } from 'chonky';
+import { Grid } from 'semantic-ui-react';
 
 export const MyFileBrowser = () => {
     const files = [
@@ -8,8 +9,17 @@ export const MyFileBrowser = () => {
     ];
     const folderChain = [{ id: 'xcv', name: 'Forms', isDir: true }];
     return (
-        <div style={{ height: 300 }}>
-            <FullFileBrowser files={files} folderChain={folderChain} />
-        </div>
+
+
+        <Grid style={{ marginTop: '7em' }}>
+            <Grid.Column width='2'>
+            </Grid.Column>
+            <Grid.Column width='12'>
+
+                <div style={{ height: 500 }}>
+                    <FullFileBrowser files={files} folderChain={folderChain} />
+                </div>
+            </Grid.Column>
+        </Grid>
     );
 };
