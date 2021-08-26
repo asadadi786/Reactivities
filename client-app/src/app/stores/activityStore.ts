@@ -1,7 +1,6 @@
 import { makeAutoObservable, runInAction } from "mobx";
 import agent from "../api/agent";
 import { Activity } from "../models/activity";
-import { v4 as uuid } from 'uuid';
 
 export default class ActivityStore {
 
@@ -10,7 +9,7 @@ export default class ActivityStore {
     selectedActivity: Activity | undefined = undefined;
     editMode = false;
     loading = false; ////loading indicator on submit btn click while creating or updataing an acticity
-    loadingIntials = true; //loading indicator at page load or reload
+    loadingIntials = true; //loading indicator at ActivityDashboard page load or reload 
 
     constructor() {
         makeAutoObservable(this)
@@ -23,15 +22,12 @@ export default class ActivityStore {
 
     //loading activities 
     loadActivities = async () => {
+        this.loadingIntials = true;
         //synchronous code is out of try catch
         try {
-
             const activities = await agent.Activities.list();
-
             activities.forEach((activity) => {
-                activity.date = activity.date.split("T")[0];
-                //mutating state directly by pushing activity one by one to actvities array, in mobx direct mutation is allowed, in redux objects are immutable 
-                this.activityRegistry.set(activity.id, activity);
+                this.setActivity(activity);
             });
             this.setLoadingIntials(false);
         }
@@ -41,37 +37,58 @@ export default class ActivityStore {
         }
     }
 
+    //load activity will load activity that is clicked "View Button" 
+    loadActivity = async (id: string) => {
+
+        //checking if we have clicked activity in memory
+        let activity = this.getActivity(id);
+        if (activity) {
+            this.selectedActivity = activity;
+            return activity;
+        } else {
+            this.loadingIntials = true;
+            //else we will fetch clicked Activity from API
+            try {
+
+                activity = await agent.Activities.detail(id);
+                this.setActivity(activity);
+                runInAction(() => {
+                    this.selectedActivity = activity;
+                })
+
+                this.setLoadingIntials(false);
+                return activity;
+
+            } catch (error) {
+                console.log(error);
+                this.setLoadingIntials(false);
+            }
+        }
+    }
+
+    //get activity from memory
+    private getActivity = (id: string) => {
+        return this.activityRegistry.get(id);
+    }
+
+    //push activity to activityRegistry with splitted date.
+    private setActivity = (activity: Activity) => {
+        activity.date = activity.date.split("T")[0];
+        //mutating state directly by pushing activity one by one to actvities array, in mobx direct mutation is allowed, in redux objects are immutable 
+        this.activityRegistry.set(activity.id, activity);
+
+    }
+
     //Setting loading indicator
     setLoadingIntials = (state: boolean) => {
         this.loadingIntials = state;
     }
 
-    //show selected activity data 
-    selectActivity = (id: string) => {
-        this.selectedActivity = this.activityRegistry.get(id);
-    }
-
-    //hide selected activity data 
-    cancelSelectedActivity = () => {
-        this.selectedActivity = undefined;
-    }
-
-    //Open activity details form for editing existing activity or for creating new activity
-    openForm = (id?: string) => {
-        //if id not null then show selected activity in form otherwise show empty form to create new activity 
-        id ? this.selectActivity(id) : this.cancelSelectedActivity();
-        this.editMode = true;
-    }
-
-    //close activity details form 
-    closeForm = () => {
-        this.editMode = false;
-    }
 
     //createing a new activity and storing in mock DB
     createActivity = async (activity: Activity) => {
         this.loading = true;
-        activity.id = uuid();
+
         try {
             await agent.Activities.create(activity);
             runInAction(() => {
@@ -113,8 +130,6 @@ export default class ActivityStore {
             await agent.Activities.delete(id);
             runInAction(() => {
                 this.activityRegistry.delete(id);
-                //checking if deleted activity is also selected then cancel it so it would not appear at page rihthand side even after get deleted.
-                if (this.selectedActivity?.id === id) this.cancelSelectedActivity();
                 this.loading = false;
             })
 

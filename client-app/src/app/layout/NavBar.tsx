@@ -1,18 +1,15 @@
 /* eslint-disable no-unreachable */
 import React from "react";
+import { Link, NavLink } from "react-router-dom";
 import { Button, Container, Menu, Image } from "semantic-ui-react";
-import { useStore } from "../stores/store";
 //import { MyFileBrowser } from './MyFileBrowser';
 
 export default function NavBar() {
-  const { activityStore } = useStore();
-  const { openForm } = activityStore;
-
   return (
     <>
       <Menu inverted fixed="top">
         <Container>
-          <Menu.Item header>
+          <Menu.Item header exact as={NavLink} to="/">
             {/* <img
               src="/assets/paie_logo.jpg"
               alt="logo"
@@ -21,10 +18,16 @@ export default function NavBar() {
             <Image src="/assets/paie_logo.jpg" size="tiny" circular />
             PAIE Digital Management Solution
           </Menu.Item>
-          {/* <Menu.Item name="DMS" /> */}
+          <Menu.Item
+            header
+            as={NavLink}
+            to="/activities"
+            name="Activities"
+          ></Menu.Item>
           <Menu.Item>
             <Button
-              onClick={()=>openForm()}
+              as={Link}
+              to="/createActivity"
               positive
               content="Create Work Order"
               style={{ marginRight: "150px" }}

@@ -9,13 +9,16 @@ import { ChonkyIconFA } from "chonky-icon-fontawesome";
 //import Dump from "./app/layout/Dump";
 import App from "./app/layout/App";
 import { store, StoreContext } from "./app/stores/store";
+import { BrowserRouter } from "react-router-dom";
 
 // Somewhere in your `index.ts`:
 setChonkyDefaults({ iconComponent: ChonkyIconFA });
 
 ReactDOM.render(
   <StoreContext.Provider value={store}>
-    <App />
+    <BrowserRouter>
+      <App />
+    </BrowserRouter>
   </StoreContext.Provider>,
   document.getElementById("root")
 );
