@@ -63,7 +63,7 @@ export default observer(function ActivityForm() {
     <Segment clearing>
       <Form onSubmit={handleSubmit} autoComplete="off">
         <Form.Input
-          placeholder="ourRef"
+          placeholder="Title"
           value={activity.title}
           name="title"
           onChange={handleInputChange}
@@ -74,7 +74,7 @@ export default observer(function ActivityForm() {
           name="description"
           onChange={handleInputChange}
         />
-        <Form.Input placeholder="equipment" />
+
         <Form.Input
           type="date"
           placeholder="Date"
@@ -88,11 +88,8 @@ export default observer(function ActivityForm() {
           name="category"
           onChange={handleInputChange}
         />
-        <Form.Input placeholder="supervisor" />
-        <Form.Input placeholder="labor" />
-        <Form.Input placeholder="estimated_duration" />
         <Form.Input
-          placeholder="Company"
+          placeholder="Venue"
           value={activity.venue}
           name="venue"
           onChange={handleInputChange}
