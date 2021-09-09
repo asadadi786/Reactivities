@@ -15,29 +15,31 @@ export default function NavBar() {
               alt="logo"
               style={{ marginRight: "10px" }}
             /> */}
-            <Image src="/assets/paie_logo.jpg" size="tiny" circular />
-            PAIE Digital Management Solution
+            <Image src="/assets/logo.png" size="mini" circular />
+            Reactivities
           </Menu.Item>
-          <Menu.Item
-            header
-            as={NavLink}
-            to="/activities"
-            name="Activities"
-          ></Menu.Item>
+          <Menu.Item header as={NavLink} to="/activities" name="Activities">
+            <Menu.Item
+              header
+              as={NavLink}
+              to="/errors"
+              name="Errors"
+            ></Menu.Item>
+          </Menu.Item>
           <Menu.Item>
             <Button
               as={Link}
               to="/createActivity"
               positive
-              content="Create Work Order"
+              content="Create Activity"
               style={{ marginRight: "150px" }}
             />
           </Menu.Item>
-          <Menu.Item>
+          {/* <Menu.Item>
             <Button content="Forms" style={{ marginRight: "10px" }}></Button>
             <Button content="Employoe" style={{ marginRight: "10px" }}></Button>
             <Button content="Services" style={{ marginRight: "10px" }}></Button>
-          </Menu.Item>
+          </Menu.Item> */}
           <Menu.Item header>
             <Image
               src="/assets/user.png"
