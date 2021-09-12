@@ -1,3 +1,4 @@
+import { format } from "date-fns";
 import { makeAutoObservable, runInAction } from "mobx";
 import agent from "../api/agent";
 import { Activity } from "../models/activity";
@@ -9,7 +10,7 @@ export default class ActivityStore {
     selectedActivity: Activity | undefined = undefined;
     editMode = false;
     loading = false; ////loading indicator on submit btn click while creating or updataing an acticity
-    loadingIntials = true; //loading indicator at ActivityDashboard page load or reload 
+    loadingIntials = false; //loading indicator at ActivityDashboard page load or reload 
 
     constructor() {
         makeAutoObservable(this)
@@ -17,7 +18,7 @@ export default class ActivityStore {
 
     get activitiiesByDate() {
         return Array.from(this.activityRegistry.values()).sort((a, b) =>
-            Date.parse(a.date) - Date.parse(b.date));
+            a.date!.getTime() - b.date!.getTime());
     }
 
     //group activities by date
@@ -25,7 +26,7 @@ export default class ActivityStore {
         return Object.entries(
             this.activitiiesByDate.reduce((activities, activity) => {
 
-                const date = activity.date;
+                const date = format(activity.date!, 'dd MMM yyyy');
                 //if activities array  has array with date then add activity(we are looping on) to activities[date](grouped with other activities having same date)
                 //else create new array w.r.t to date and add this activity to that array
                 activities[date] = activities[date] ? [...activities[date], activity] : [activity];
@@ -87,7 +88,7 @@ export default class ActivityStore {
 
     //push activity to activityRegistry with splitted date.
     private setActivity = (activity: Activity) => {
-        activity.date = activity.date.split("T")[0];
+        activity.date = new Date(activity.date!);
         //mutating state directly by pushing activity one by one to actvities array, in mobx direct mutation is allowed, in redux objects are immutable 
         this.activityRegistry.set(activity.id, activity);
 
