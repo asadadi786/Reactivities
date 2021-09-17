@@ -1,6 +1,8 @@
 using System;
 using System.Threading.Tasks;
+using Domain;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -22,8 +24,11 @@ namespace API
             try
             {
                 var context = services.GetRequiredService<DataContext>(); //adding DataContect as a Service
+                var userManager = services.GetRequiredService<UserManager<AppUser>>();
                 await context.Database.MigrateAsync();//apply pending migrations,create db if not already created othewise update to latest migration
-                await Seed.SeedData(context);//Activities Seed data Object
+                await Seed.SeedData(context, userManager);//Activities Seed data Object
+
+                //will remove following SeedData1 and SeedData2
                 await Seed.SeedData1(context);//Order Seed data Object--may not be used
                 await Seed.SeedData2(context);//OrderTask seed data
             }
