@@ -1,55 +1,60 @@
 /* eslint-disable no-unreachable */
+import { observer } from "mobx-react-lite";
 import React from "react";
 import { Link, NavLink } from "react-router-dom";
-import { Button, Container, Menu, Image } from "semantic-ui-react";
+import { Button, Container, Menu, Image, Dropdown } from "semantic-ui-react";
+import { useStore } from "../stores/store";
 //import { MyFileBrowser } from './MyFileBrowser';
 
-export default function NavBar() {
+export default observer(function NavBar() {
+  const {
+    userStore: { user, logout },
+  } = useStore();
+
   return (
     <>
       <Menu inverted fixed="top">
         <Container>
           <Menu.Item header exact as={NavLink} to="/">
-            {/* <img
-              src="/assets/paie_logo.jpg"
+            <img
+              src="/assets/logo.png"
               alt="logo"
               style={{ marginRight: "10px" }}
-            /> */}
-            <Image src="/assets/logo.png" size="mini" circular />
+            />
             Reactivities
           </Menu.Item>
-          <Menu.Item header as={NavLink} to="/activities" name="Activities">
-            <Menu.Item
-              header
-              as={NavLink}
-              to="/errors"
-              name="Errors"
-            ></Menu.Item>
-          </Menu.Item>
+          <Menu.Item as={NavLink} to="/activities" name="Activities" />
+          <Menu.Item as={NavLink} to="/errors" name="Errors" />
+
           <Menu.Item>
             <Button
-              as={Link}
+              as={NavLink}
               to="/createActivity"
               positive
               content="Create Activity"
-              style={{ marginRight: "150px" }}
             />
           </Menu.Item>
-          {/* <Menu.Item>
-            <Button content="Forms" style={{ marginRight: "10px" }}></Button>
-            <Button content="Employoe" style={{ marginRight: "10px" }}></Button>
-            <Button content="Services" style={{ marginRight: "10px" }}></Button>
-          </Menu.Item> */}
-          <Menu.Item header>
+
+          <Menu.Item position="right">
             <Image
-              src="/assets/user.png"
-              size="mini"
-              circular
-              style={{ marginLeft: "50px" }}
+              src={user?.image || "/assets/user.png"}
+              avatar
+              spaced="right"
             />
+            <Dropdown pointing="top left" text={user?.displayName}>
+              <Dropdown.Menu>
+                <Dropdown.Item
+                  as={Link}
+                  to={`/profile/${user?.username}`}
+                  text="My Profile"
+                  icon="user"
+                />
+                <Dropdown.Item onClick={logout} text="Logout" icon="power" />
+              </Dropdown.Menu>
+            </Dropdown>
           </Menu.Item>
         </Container>
       </Menu>
     </>
   );
-}
+});

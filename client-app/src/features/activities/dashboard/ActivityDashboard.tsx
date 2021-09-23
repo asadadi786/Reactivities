@@ -16,12 +16,12 @@ export default observer(function ActivityDashboard() {
   }, [activityRegistry, loadActivities]);
 
   if (activityStore.loadingIntials)
-    return <LoadingComponent content="Loading App" />;
+    return <LoadingComponent content="Loading Activities..." />;
 
   return (
     <>
       <Segment>
-        <Header as="h3">WorkOrder</Header>
+        <Header as="h3">Activities</Header>
 
         <Grid>
           <Grid.Column width="10">
